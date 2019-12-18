@@ -3,9 +3,8 @@ from abc import abstractmethod
 from enum import Enum
 from pathlib import Path
 from typing import Tuple, Union
-import numpy as np
-import torch
 
+import numpy as np
 from hyperopt import hp, fmin, tpe
 
 import flair.nn
@@ -24,7 +23,6 @@ from flair.training_utils import (
     EvaluationMetric,
     log_line,
     init_output_file,
-    add_file_handler,
 )
 
 log = logging.getLogger("flair")
@@ -48,13 +46,13 @@ class SearchSpace(object):
 
 class ParamSelector(object):
     def __init__(
-        self,
-        corpus: Corpus,
-        base_path: Union[str, Path],
-        max_epochs: int,
-        evaluation_metric: EvaluationMetric,
-        training_runs: int,
-        optimization_value: OptimizationValue,
+            self,
+            corpus: Corpus,
+            base_path: Union[str, Path],
+            max_epochs: int,
+            evaluation_metric: EvaluationMetric,
+            training_runs: int,
+            optimization_value: OptimizationValue,
     ):
         if type(base_path) is str:
             base_path = Path(base_path)
@@ -115,7 +113,9 @@ class ParamSelector(object):
 
             # take the average over the last three scores of training
             if self.optimization_value == OptimizationValue.DEV_LOSS:
-                curr_scores = map(lambda s: s.to("cpu").numpy(), result["dev_loss_history"][-3:])
+                curr_scores = list(
+                    map(lambda s: s.to("cpu").numpy(), result["dev_loss_history"][-3:])
+                )
             else:
                 curr_scores = list(
                     map(lambda s: 1 - s.to("cpu").numpy(), result["dev_score_history"][-3:])
@@ -181,14 +181,14 @@ class ParamSelector(object):
 
 class SequenceTaggerParamSelector(ParamSelector):
     def __init__(
-        self,
-        corpus: Corpus,
-        tag_type: str,
-        base_path: Union[str, Path],
-        max_epochs: int = 50,
-        evaluation_metric: EvaluationMetric = EvaluationMetric.MICRO_F1_SCORE,
-        training_runs: int = 1,
-        optimization_value: OptimizationValue = OptimizationValue.DEV_LOSS,
+            self,
+            corpus: Corpus,
+            tag_type: str,
+            base_path: Union[str, Path],
+            max_epochs: int = 50,
+            evaluation_metric: EvaluationMetric = EvaluationMetric.MICRO_F1_SCORE,
+            training_runs: int = 1,
+            optimization_value: OptimizationValue = OptimizationValue.DEV_LOSS,
     ):
         """
         :param corpus: the corpus
@@ -226,15 +226,15 @@ class SequenceTaggerParamSelector(ParamSelector):
 
 class TextClassifierParamSelector(ParamSelector):
     def __init__(
-        self,
-        corpus: Corpus,
-        multi_label: bool,
-        base_path: Union[str, Path],
-        document_embedding_type: str,
-        max_epochs: int = 50,
-        evaluation_metric: EvaluationMetric = EvaluationMetric.MICRO_F1_SCORE,
-        training_runs: int = 1,
-        optimization_value: OptimizationValue = OptimizationValue.DEV_LOSS,
+            self,
+            corpus: Corpus,
+            multi_label: bool,
+            base_path: Union[str, Path],
+            document_embedding_type: str,
+            max_epochs: int = 50,
+            evaluation_metric: EvaluationMetric = EvaluationMetric.MICRO_F1_SCORE,
+            training_runs: int = 1,
+            optimization_value: OptimizationValue = OptimizationValue.DEV_LOSS,
     ):
         """
         :param corpus: the corpus
