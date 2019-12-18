@@ -1,9 +1,9 @@
-from flair.embeddings import *
-from flair.hyperparameter.param_selection import SearchSpace, Parameter, SequenceTaggerParamSelector
-from flair.training_utils import EvaluationMetric
 from hyperopt import hp
 
 from TokenLimitedColumnDataset import TokenLimitedColumnCorpus
+from flair.embeddings import *
+from flair.hyperparameter.param_selection import SearchSpace, Parameter, SequenceTaggerParamSelector
+from flair.training_utils import EvaluationMetric
 
 device = torch.device('cuda:0')
 
@@ -59,6 +59,7 @@ search_space.add(Parameter.LEARNING_RATE, hp.choice, options=[0.05, 0.1, 0.15])
 search_space.add(Parameter.MINI_BATCH_SIZE, hp.choice, options=[16, 32])
 search_space.add(Parameter.RNN_LAYERS, hp.choice, options=[1, 2])
 search_space.add(Parameter.OPTIMIZER, hp.choice, options=[torch.optim.SGD])
+search_space.add(Parameter.EMBEDDINGS_STORAGE_MODE, hp.choice, options=["gpu"])
 
 print('#################\n'
       '### Searching ###\n'
